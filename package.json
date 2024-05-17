@@ -2,6 +2,7 @@
   "name": "coffeeshop",
   "version": "1.0.0",
   "description": "",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
     "build-tailwind": "NODE_ENV=production tailwindcss build -i styles/tailwindcss.css -o assets/styles.css --watch"
@@ -10,8 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "connect-mongodb-session": "^2.2.0",
     "ejs": "^3.1.10",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.4.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

@@ -11,5 +11,15 @@ window.onload = function() {
                 register.classList.remove('hidden');
             }
         })
-    })
+    });
+
+    document.querySelector('#register-section form').addEventListener('submit', function(event) {
+        const password = document.querySelector('#register-section #password').value;
+        const confirmPassword = document.querySelector('#register-section #confirm-password').value;
+        if (password !== confirmPassword) {
+          event.preventDefault(); // Prevent form submission
+          alert('Passwords do not match');
+          console.log("Passwords do not match " + password + " " + confirmPassword);
+        }
+      });
 }

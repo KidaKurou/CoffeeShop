@@ -1,4 +1,4 @@
-<div class="absolute top-28 right-3 bg-white overflow-hidden shadow rounded-lg border w-md max-w-md mx-0 hidden">
+<div class="profile-block-class absolute top-28 right-3 bg-white overflow-hidden shadow rounded-lg border w-md max-w-md mx-0 hidden">
     <div class="flex items-center space-x-6 pl-10">
         <div class="relative w-16 h-16 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
             <svg class="absolute w-19 h-19 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20"
@@ -23,7 +23,7 @@
                     Полное имя
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    John Doe
+                    <%= user.name %>
                 </dd>
             </div>
             <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -31,7 +31,7 @@
                     Email адрес
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    johndoe@example.com
+                    <%= user.email %>
                 </dd>
             </div>
             <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -39,7 +39,7 @@
                     Телефон
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    +7 (987) 456-78
+                    <%= user.phone %>
                 </dd>
             </div>
             <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -59,10 +59,12 @@
                     class="block text-center flex-1 text-sm py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-100">
                     Избранное
                 </a>
-                <button
-                    class="block text-center flex-1 text-sm py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-100">
-                    Выйти
-                </button>
+                <form action="/logout" method="POST">
+                    <button
+                        class="block text-center flex-1 text-sm py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-100">
+                        Выйти
+                    </button>
+                </form>
             </div>
             <div class="py-3 sm:py-5 sm:px-6 space-x-4 hidden">
                 <a href="/admin_panel"

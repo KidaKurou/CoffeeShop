@@ -16,6 +16,7 @@
           </svg>
         </button>
       </a>
+      <% if (!user) { %>
       <a href="/login">
         <button class="inline-flex items-center bg-gray-100 border-0 py-2 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0 mr-2">Войти
           <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
@@ -23,11 +24,12 @@
           </svg>
         </button>
       </a>
-      <a href="/profile" class="hidden">
+      <% } else { %>
+      <a href="/profile">
         <button class="inline-flex items-center bg-gray-100 border-0 py-2 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Профиль
         </button>
-      </a>       
+      </a>
+      <%- include('profile'); %>
+      <% } %>  
     </div>
-
-    <%- include('profile'); %>
   </header>

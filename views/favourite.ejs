@@ -10,7 +10,7 @@
 <body>
     <%- include('header'); %>
     
-    <section class="text-gray-600 body-font">
+    <section class="text-gray-600 body-font" style="height: calc(100vh - 220px);">
         <div class="container px-5 py-20 mx-auto">
             <div class="flex flex-wrap w-full mb-10 px-24">
                 <div class="lg:w-1/2 w-full mb-6 lg:mb-0">
@@ -26,12 +26,14 @@
                             <div class="hidden xl:mt-8 xl:block">
                                 <div class="mt-6 grid grid-cols-3 gap-20 sm:mt-8">
                                     
-                                    <%- include('card_block'); %>
-                                    <%- include('card_block'); %>
-                                    <%- include('card_block'); %>
-                                    <%- include('card_block'); %>
-                                    <%- include('card_block'); %>
-                                    <%- include('card_block'); %>
+                                    <!-- Product cards -->
+                                    <% if (favorites && favorites.length > 0) { %>
+                                        <% favorites.forEach(function(product) { %>
+                                          <%- include('card_block', { product: product }); %>
+                                        <% }); %>
+                                      <% } else { %>
+                                        <p>No favorites added yet.</p>
+                                      <% } %>
                                     
                                 </div>
                             </div>
@@ -44,5 +46,7 @@
     </section>
     
     <%- include('footer'); %>
+    <script src="../assets/js/hover_profile.js"></script>
+    <script src="../assets/js/favotire_btn.js"></script>
 </body>
 </html>
