@@ -39,7 +39,11 @@
                     Телефон
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    <%= user.phone %>
+                    <% if (user.phone) { %>
+                        <%= user.phone %>
+                    <% } else { %>
+                        <span class="text-gray-400">Добавьте телефон</span>
+                    <% } %>
                 </dd>
             </div>
             <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -47,7 +51,11 @@
                     Адрес
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    Россия, г. Москва, Московская улица, д. 5
+                    <% if (user.address) { %>
+                        <%= user.address %>
+                    <% } else { %>
+                        <span class="text-gray-400">Добавьте адрес</span>
+                    <% } %>
                 </dd>
             </div>
             <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex space-x-4">
@@ -57,7 +65,7 @@
                 </a>
                 <a href="/favorites"
                     class="block text-center flex-1 text-sm py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-100">
-                    Избранное
+                    Изменить
                 </a>
                 <form action="/logout" method="POST">
                     <button

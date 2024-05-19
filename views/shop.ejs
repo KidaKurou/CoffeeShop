@@ -183,7 +183,7 @@
                                     <div class="mt-6 grid grid-cols-3 gap-20 sm:mt-8">
 
                                         <% products.forEach(function(product) { %>
-                                            <%- include('card_block', { product: product }); %>
+                                            <%- include('card_block', { product: product, user: user }); %>
                                                 <% }); %>
 
                                     </div>
@@ -201,6 +201,7 @@
             <script src="../assets/js/sort_filter.js"></script>
             <script src="../assets/js/hover_profile.js"></script>
             <script src="../assets/js/favotire_btn.js"></script>
+            <script src="../assets/js/buy_btn.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,12 @@
 document.querySelectorAll('.favorite-btn').forEach(button => {
+  const profileBlock = document.querySelector('.profile-block-class');
+  if (!profileBlock) {
+    console.log("You need to login");
+    return;
+  }
+
   button.addEventListener('click', function() {
+    const favoriteIcon = this.querySelector('img');
     const productId = this.dataset.productId;
     console.log("clicked " + productId);
     fetch('/add-to-favorites', {
@@ -14,9 +21,11 @@ document.querySelectorAll('.favorite-btn').forEach(button => {
     .then(data => {
       if (data.success) {
         // Update the UI to reflect the favorite status
-        this.classList.toggle('text-red-500');
-        this.classList.toggle('text-grey-400');
-        console.log('Product added to favorites');
+        const isFavorite = favoriteIcon.src.includes('fav-red-ic.svg');
+        favoriteIcon.src = isFavorite ? '../img/fav-white-ic.svg' : '../img/fav-red-ic.svg';
+        if (document.location.pathname === '/favourite') {
+          location.reload();
+        }
       }
     })
     .catch(error => console.error('Error:', error));

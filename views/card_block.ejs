@@ -1,22 +1,36 @@
-<div class="space-y-6 overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 hover:scale-105 duration-300">
+<div data-price="<%= product.price %>"
+    class="product-card space-y-6 overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 hover:scale-105 duration-300">
     <div class="flex justify-between" style="align-items: flex-start;">
-        <div>
-            <h2 class="text-xl font-semibold uppercase leading-tight text-gray-900 dark:text-white"><a href="/product_overview"><%= product.name %></a></h2>
-            <p class="text-gray-500 dark:text-gray-400"><%= product.options.grindType %></p>
-        </div>
-        <button data-product-id="<%= product._id %>" class="favorite-btn text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-white">
-            <!-- <i class="fa-solid fa-heart text-xl"></i> -->
-            <img src="../img/fav-white-ic.svg" alt="Favourite" class="w-6 h-6 invert-50 hover:invert-0 duration-300">
+        <a href="/product_overview">
+            <div>
+                <h2 class="text-xl font-semibold uppercase leading-tight text-gray-900 dark:text-white"><a
+                        href="/product_overview">
+                        <%= product.name %>
+                    </a></h2>
+                <p class="text-gray-500 dark:text-gray-400">
+                    <%= product.options.grindType %>
+                </p>
+            </div>
+        </a>
+        <button data-product-id="<%= product._id %>" class="favorite-btn">
+            <% if (user && user.favorites && user.favorites.includes(product._id.toString())) { %>
+                <img src="../img/fav-red-ic.svg" id="fav-red-ic" alt="Favourite"
+                    class="w-6 h-6 invert-0 hover:invert-25 duration-300">
+                <% } else { %>
+                    <img src="../img/fav-white-ic.svg" id="fav-white-ic" alt="Favourite"
+                        class="w-6 h-6 invert-0 hover:invert-25 duration-300">
+                    <% } %>
         </button>
     </div>
     <a href="/product_overview" class="block overflow-hidden rounded">
-        <img class="my-5 mx-auto h-44 w-44 dark:hidden"
-            src="<%= product.images[0] %>" alt="<%= product.name %>" />
+        <img class="my-5 mx-auto h-44 w-44 dark:hidden" src="<%= product.images[0] %>" alt="<%= product.name %>" />
         <!-- <img class="my-5 mx-auto hidden h-44 w-44 dark:block"
             src="<%= product.images[0] %>" alt="Кофе" /> -->
     </a>
     <div class="description">
-        <p class="text-gray-500 dark:text-gray-400"><%= product.description %></p>
+        <p class="text-gray-500 dark:text-gray-400">
+            <%= product.description %>
+        </p>
     </div>
     <div class="flex justify-between">
         <div class="relative pt-1">
@@ -38,42 +52,44 @@
     </div>
     <div class="flex justify-between items-center">
         <div>
-            <select class="rounded border-gray-300 focus-visible:outline-none">
+            <select class="grindType-selector rounded border-gray-300 focus-visible:outline-none">
                 <option>В зернах</option>
                 <option>Молотый</option>
             </select>
         </div>
         <div class="inline-flex items-center">
-            <button class="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
+            <button
+                class="quantity-decrease text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
                 <i class="fas fa-minus"></i>
             </button>
-            <p class="mx-1 text-center w-8 text-xl">1</p>
-            <button class="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
+            <p class="quantity mx-1 text-center w-8 text-xl">1</p>
+            <button
+                class="quantity-increase text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
                 <i class="fas fa-plus"></i>
             </button>
         </div>
     </div>
     <div class="flex justify-between items-center">
         <div>
-            <p class="text-lg font-bold text-gray-900 dark:text-white">$<%= product.price %></p>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">$<%= product.price %>
+            </p>
             <p class="text-sm text-gray-700 dark:text-gray-50">Скидка <%= product.discount %>%</p>
         </div>
         <div>
-            <select class="rounded border-gray-300 focus-visible:outline-none">
-                <option>250 г</option>
-                <option>1000 г</option>
+            <span>г</span>
+            <select class="weight-selector rounded border-gray-300 focus-visible:outline-none">
+                <option>250</option>
+                <option>1000</option>
             </select>
         </div>
-        <a href="/product_overview">
-            <button type="button"
-                class="inline-flex items-center justify-center rounded-lg bg-amber-700 px-4 py-2.5 text-sm font-medium  text-white hover:bg-amber-950 focus:outline-none focus:ring-4 dark:bg-amber-700 dark:hover:bg-amber-950">
-                <svg class="-ms-2 me-2 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4" />
-                </svg>
-                Купить
-            </button>
-        </a>
+        <button type="button" data-product-id="<%= product._id %>"
+            class="add-to-cart-btn inline-flex items-center justify-center rounded-lg bg-amber-700 px-4 py-2.5 text-sm font-medium  text-white hover:bg-amber-950 focus:outline-none dark:bg-amber-700 dark:hover:bg-amber-950">
+            <svg class="-ms-2 me-2 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4" />
+            </svg>
+            Купить
+        </button>
     </div>
 </div>

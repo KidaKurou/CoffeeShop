@@ -1,26 +1,16 @@
-window.onload = function () {
-  const profileButton = document.querySelector('a[href="/profile"]');
-  const profileBlock = document.querySelector(".profile-block-class");
-  const mouseInProfile = false;
+document.addEventListener('DOMContentLoaded', function () {
+  const profileButton = document.querySelector('#profileBtn');
+  const profileContent = document.querySelector(".profile-block-class");
 
-  profileBlock.addEventListener("mouseenter", function () {
-    mouseInProfile = true;
+  profileButton.addEventListener('mouseenter', function () {
+    profileContent.classList.remove('hidden');
   });
 
-  profileBlock.addEventListener("mouseleave", function () {
-    mouseInProfile = false;
-  });
-
-  profileButton.addEventListener("mouseenter", function () {
-    profileBlock.classList.remove("hidden");
-  });
-
-  profileButton.addEventListener("mouseleave", function () {
-    // Delay hiding the profile block
+  profileButton.addEventListener('mouseleave', function () {
     setTimeout(function () {
-        if (!mouseInProfile) {
-            profileBlock.classList.add("hidden");
+      if (!profileContent.matches(':hover')) {
+        profileContent.classList.add('hidden');
       }
-    }, 1000);
+    }, 500); // Задержка перед скрытием блока профиля
   });
-};
+});

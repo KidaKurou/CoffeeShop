@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const Product = require("./models/product.model");
 const User = require("./models/user.model");
 const Feedback = require("./models/feedback.model");
+const Cart = require("./models/cart.model");
 
 const app = express();
 
@@ -132,8 +133,12 @@ app.post("/logout", (req, res) => {
 
 app.get("/shop", async (req, res) => {
   try {
-    const products = await Product.find(); // Fetch all products from the database
-    res.render("shop", { products, user: req.session.userId }); // Pass the products to the index template
+    const products = await Product.find();
+    let user = null;
+    if (req.session.userId) {
+      user = await User.findById(req.session.userId).select("-password");
+    }
+    res.render("shop", { products, user: user });
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).send("Server error");
@@ -154,29 +159,144 @@ app.get("/favourite", isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/add-to-favorites', isAuthenticated, async (req, res) => {
-    const { productId } = req.body;
-    try {
-      const user = await User.findById(req.session.userId);
-      const index = user.favorites.indexOf(productId);
-      if (index === -1) {
-        // Add to favorites if not already in the list
-        user.favorites.push(productId);
-      } else {
-        // Remove from favorites if already in the list
-        user.favorites.splice(index, 1);
-      }
-      await user.save();
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Error updating favorites:", error);
-      res.status(500).json({ success: false });
+app.post("/add-to-favorites", isAuthenticated, async (req, res) => {
+  const { productId } = req.body;
+  try {
+    const user = await User.findById(req.session.userId);
+    const index = user.favorites.indexOf(productId);
+    if (index === -1) {
+      // Add to favorites if not already in the list
+      user.favorites.push(productId);
+    } else {
+      // Remove from favorites if already in the list
+      user.favorites.splice(index, 1);
     }
-  });
-  
+    await user.save();
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error updating favorites:", error);
+    res.status(500).json({ success: false });
+  }
+});
 
-app.get("/shopping_cart", isAuthenticated, async (req, res) => {
-  res.render("shopping_cart", {});
+app.get('/shopping_cart', isAuthenticated, async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ user: req.session.userId }).populate('items.product');
+    res.render('shopping_cart', { cart });
+  } catch (error) {
+    console.error("Error fetching shopping_cart:", error);
+    res.status(500).send("Server error");
+  }
+});
+
+// app.post('/update-cart-item', isAuthenticated, async (req, res) => {
+//   const { itemId, quantity, grindType, weight } = req.body;
+//   try {
+//     const cart = await Cart.findOne({ user: req.session.userId });
+//     const item = cart.items.id(itemId);
+//     if (item) {
+//       item.quantity = quantity;
+//       item.grindType = grindType;
+//       item.weight = weight;
+//       await cart.save();
+//       res.json({ success: true });
+//     } else {
+//       res.status(404).json({ success: false, message: 'Item not found' });
+//     }
+//   } catch (error) {
+//     console.error("Error updating cart item:", error);
+//     res.status(500).json({ success: false });
+//   }
+// });
+app.post('/update-cart-item', async (req, res) => {
+  const { itemId, quantity, grindType, weight, currentPrice } = req.body;
+  console.log("Current price: " + currentPrice);
+  try {
+    const cart = await Cart.findOne({ 'items._id': itemId });
+    if (cart) {
+      const item = cart.items.id(itemId);
+      if (item) {
+        item.quantity = quantity;
+        item.grindType = grindType;
+        item.weight = weight;
+        item.currentPrice = currentPrice; // Убедитесь, что это значение передается из фронтенда
+        await cart.save();
+        res.json({ success: true });
+      } else {
+        res.status(404).json({ success: false, message: 'Item not found in cart' });
+      }
+    } else {
+      res.status(404).json({ success: false, message: 'Cart not found' });
+    }
+  } catch (error) {
+    console.error("Error updating cart item:", error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+
+app.post('/remove-cart-item', isAuthenticated, async (req, res) => {
+  const { itemId } = req.body;
+  console.log(itemId);
+  try {
+    const cart = await Cart.findOne({ user: req.session.userId });
+    // Проверяем, существует ли элемент в массиве
+    const itemIndex = cart.items.findIndex(item => item.id === itemId);
+    if (itemIndex > -1) {
+      // Используем метод 'pull' для удаления элемента по id
+      cart.items.pull({ _id: itemId });
+      await cart.save();
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, message: 'Item not found' });
+    }
+  } catch (error) {
+    console.error("Error removing cart item:", error);
+    res.status(500).json({ success: false });
+  }
+});
+
+
+
+
+
+app.post("/add-to-cart", isAuthenticated, async (req, res) => {
+  const { productId, grindType, weight, quantity, currentPrice } = req.body;
+  console.log("Current price: " + currentPrice);
+  try {
+    // Найти корзину пользователя или создать новую, если она не существует
+    let cart = await Cart.findOne({ user: req.session.userId });
+    if (!cart) {
+      cart = new Cart({ user: req.session.userId, items: [] });
+    }
+
+    // Проверить, есть ли уже такой товар в корзине с такими же параметрами
+    const itemIndex = cart.items.findIndex(
+      (item) =>
+        item.product.toString() === productId &&
+        item.grindType === grindType &&
+        item.weight === weight
+    );
+
+    if (itemIndex > -1) {
+      // Если товар уже есть в корзине, увеличить количество
+      cart.items[itemIndex].quantity += quantity;
+    } else {
+      // Если товара нет, добавить его в корзину
+      cart.items.push({ product: productId, grindType, weight, quantity, currentPrice });
+    }
+
+    await cart.save();
+    res.json({ success: true, message: "Товар добавлен в корзину" });
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Ошибка при добавлении товара в корзину",
+      });
+  }
 });
 
 app.get("/contacts", isAuthenticated, async (req, res) => {

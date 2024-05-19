@@ -10,7 +10,7 @@
 <body>
     <%- include('header'); %>
     
-    <section class="text-gray-600 body-font" style="height: calc(100vh - 220px);">
+    <section class="text-gray-600 body-font" style="min-height: calc(100vh - 220px);">
         <div class="container px-5 py-20 mx-auto">
             <div class="flex flex-wrap w-full mb-10 px-24">
                 <div class="lg:w-1/2 w-full mb-6 lg:mb-0">
@@ -32,7 +32,7 @@
                                           <%- include('card_block', { product: product }); %>
                                         <% }); %>
                                       <% } else { %>
-                                        <p>No favorites added yet.</p>
+                                        <p>Не добавлено ни одного продукта.</p>
                                       <% } %>
                                     
                                 </div>
@@ -48,5 +48,6 @@
     <%- include('footer'); %>
     <script src="../assets/js/hover_profile.js"></script>
     <script src="../assets/js/favotire_btn.js"></script>
+    <script src="../assets/js/buy_btn.js"></script>
 </body>
 </html>
