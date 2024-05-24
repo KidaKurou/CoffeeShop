@@ -12,7 +12,8 @@
 <body>
     <%- include('header'); %>
 
-        <section class="text-gray-600 body-font overflow-hidden">
+        <section data-product-id="<%= product.id %>" data-price="<%= product.price %>"
+            class="product-overview text-gray-600 body-font overflow-hidden" style="min-height: calc(100svh - 220px) ;">
             <div class="container px-5 py-24 mx-auto">
                 <div class="lg:w-4/5 mx-auto flex flex-wrap">
                     <div>
@@ -24,15 +25,21 @@
                         <span class="mx-2">/</span>
                     </div>
                     <div>
-                        <a href="/product_overview/id=1" class="text-gray-700 hover:text-gray-900">Название кофе</a>
+                        <a href="/product/<%= product.id %>" class="text-gray-700 hover:text-gray-900">
+                            <%= product.name %>
+                        </a>
                     </div>
                 </div>
                 <div class="lg:w-4/5 mx-auto flex flex-wrap">
-                    <img alt="ecommerce" class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
-                        src="../img/colombia-huila-025.png">
+                    <img class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
+                        src="../<%= product.images[0] %>" alt="<%= product.name %>">
                     <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-                        <h2 class="text-sm title-font text-gray-500 tracking-widest">мытый</h2>
-                        <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">БРАЗИЛИЯ СЕРРАДО</h1>
+                        <h2 class="text-sm title-font text-gray-500 tracking-widest">
+                            <%= product.options.grindType %>
+                        </h2>
+                        <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">
+                            <%= product.name %>
+                        </h1>
                         <div class="flex mb-4">
                             <span class="flex items-center">
                                 <svg fill="currentColor" stroke="currentColor" stroke-linecap="round"
@@ -97,10 +104,7 @@
                             </span>
                         </div>
                         <p class="leading-relaxed">
-                            Fam locavore kickstarter distillery. Mixtape chillwave tumeric sriracha taximy chia
-                            microdosing tilde DIY. XOXO fam indxgo juiceramps cornhole raw denim forage brooklyn.
-                            Everyday carry +1 seitan poutine tumeric. Gastropub blue bottle austin listicle pour-over,
-                            neutra jean shorts keytar banjo tattooed umami cardigan.
+                            <%= product.description %>
                         </p>
                         <div class="flex mt-6 items-center pb-5 mb-5">
                             <div class="relative pt-1 ml-1 mr-10">
@@ -121,34 +125,52 @@
                             </div>
                         </div>
                         <div class="flex justify-between items-center mt-6 pb-5 border-b-2 border-gray-100 mb-5">
-                            <div>
-                                <select class="rounded border-gray-300 focus-visible:outline-none">
-                                    <option>В зернах</option>
-                                    <option>Молотый</option>
-                                </select>
+                            <div class="flex">
+                                <div class="mr-10">
+                                    <select
+                                        class="grindType-selector rounded border-gray-300 focus-visible:outline-none">
+                                        <option>В зернах</option>
+                                        <option>Молотый</option>
+                                    </select>
+                                </div>
+                                <div class="mr-10">
+                                    <span>г</span>
+                                    <select class="weight-selector rounded border-gray-300 focus-visible:outline-none">
+                                        <option>250</option>
+                                        <option>1000</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="inline-flex items-center">
-                                <button class="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
+                                <button
+                                    class="quantity-decrease text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <p class="mx-1 text-center w-8 text-xl">1</p>
-                                <button class="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
+                                <p class="quantity mx-1 text-center w-8 text-xl">1</p>
+                                <button
+                                    class="quantity-increase text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="flex">
-                            <span class="title-font font-medium text-2xl text-gray-900">$58.00</span>
-                            <button
-                                class="flex ml-auto text-white bg-amber-700 border-0 py-2 px-6 focus:outline-none hover:bg-amber-950 rounded">Купить</button>
-                            <button
-                                class="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
-                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    class="w-5 h-5" viewBox="0 0 24 24">
-                                    <path
-                                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z">
-                                    </path>
-                                </svg>
+                            <div>
+                                <span class="title-font font-medium text-2xl text-gray-900">$<%= product.price %></span>
+                                <p class="text-sm text-gray-700 dark:text-gray-50">Скидка <%= product.discount %>%</p>
+                            </div>
+                            <button data-product-id="<%= product._id %>" data-user-id="<%= user ? user._id : '' %>"
+                                class="add-to-cart-btn flex ml-auto text-white bg-amber-700 border-0 py-2 px-6 focus:outline-none hover:bg-amber-950 rounded h-10 my-auto">
+                                Купить
+                            </button>
+                            <button data-product-id="<%= product._id %>"
+                                class="favorite-btn rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4 my-auto">
+                                <% if (user && user.favorites && user.favorites.includes(product._id.toString())) { %>
+                                    <img src="../img/fav-red-ic.svg" id="fav-red-ic" alt="Favourite"
+                                        class="w-6 h-6 invert-0 hover:invert-25 duration-300">
+                                    <% } else { %>
+                                        <img src="../img/fav-white-ic.svg" id="fav-white-ic" alt="Favourite"
+                                            class="w-6 h-6 invert-0 hover:invert-25 duration-300">
+                                        <% } %>
                             </button>
                         </div>
                     </div>
@@ -156,7 +178,77 @@
             </div>
         </section>
 
-        <%- include('footer'); %>
+        <%- include('no_auth_popup'); %>
+
+            <%- include('footer'); %>
+
+                <script src="../assets/js/favotire_btn.js"></script>
+
+                <script src="../assets/js/hover_profile.js"></script>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const productId = document.querySelector(".product-overview").dataset.productId;
+                        const quantityElement = document.querySelector(".quantity");
+                        const grindTypeSelector = document.querySelector(".grindType-selector");
+                        const weightSelector = document.querySelector(".weight-selector");
+                        const basePrice = parseInt(document.querySelector(".product-overview").dataset.price);
+
+
+                        document.querySelector(".quantity-decrease").addEventListener("click", () => {
+                            let quantity = parseInt(quantityElement.textContent);
+                            if (quantity > 1) {
+                                quantityElement.textContent = quantity - 1;
+                            }
+                            console.log("Decrease: " + quantity);
+                        });
+
+                        document.querySelector(".quantity-increase").addEventListener("click", () => {
+                            let quantity = parseInt(quantityElement.textContent);
+                            quantityElement.textContent = quantity + 1;
+                            console.log("Increase: " + quantity);
+                        });
+
+                        document.querySelector(".add-to-cart-btn").addEventListener("click", () => {
+                            // Check if the user is authenticated
+                            console.log("USER ID " + document.querySelector(".add-to-cart-btn").dataset.userId);
+                            if (document.querySelector(".add-to-cart-btn").dataset.userId !== undefined) {
+                                const grindType = grindTypeSelector.value;
+                                const weight = weightSelector.value;
+                                const quantity = parseInt(quantityElement.textContent);
+
+                                const currentPrice = (basePrice * parseInt(weight) / 250) * quantity;
+
+                                fetch("/add-to-cart", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        Accept: "application/json",
+                                    },
+                                    body: JSON.stringify({ productId, grindType, weight, quantity, currentPrice }),
+                                })
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                        if (data.success) {
+                                            // Обновите UI корзины или покажите сообщение об успехе
+                                            console.log("Товар добавлен в корзину");
+                                        }
+                                    })
+                                    .catch((error) => console.error("Error:", error));
+                            } else {
+                                // User is not authenticated, show the login pop-up
+                                const loginPopup = document.getElementById("login-popup");
+                                loginPopup.classList.remove("hidden");
+
+                                // Hide the pop-up after 5 seconds
+                                setTimeout(() => {
+                                    loginPopup.classList.add("hidden");
+                                }, 5000);
+                            }
+                        });
+                    });
+
+                </script>
 </body>
 
 </html>

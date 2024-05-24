@@ -17,7 +17,7 @@
                 <div class="mr-auto place-self-center lg:col-span-7">
                     <h1
                         class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-                        Пей кофе! <br>И не обосрись!</h1>
+                        Пей кофе! <br>И не торопись!</h1>
                     <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
                         Интернет-магазин свежего кофе.
                         Каждый день мы обжариваем кофе и бесплатно доставляем по всей России</p>
@@ -61,7 +61,9 @@
                                     <div class="mt-6 grid grid-cols-3 gap-20 sm:mt-8">
                                         
                                         <% products.forEach(function(product) { %>
-                                            <%- include('card_block', { product: product }); %>
+                                            <% if (product.discount > 0) { %>
+                                                <%- include('card_block', { product: product }); %>
+                                            <% } %>
                                         <% }); %>
                                         
                                     </div>
@@ -74,8 +76,7 @@
             </div>
         </section>
 
-
-
+        <%- include('no_auth_popup'); %>
 
         <%- include('footer'); %>
         <script src="../assets/js/hover_profile.js"></script>

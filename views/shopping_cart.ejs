@@ -41,23 +41,23 @@
                 <div class="space-y-2">
                   <dl class="flex items-center justify-between gap-4">
                     <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Конечная цена</dt>
-                    <dd class="text-base font-medium text-gray-900 dark:text-white">$7,592.00</dd>
+                    <dd class="total-price text-base font-medium text-gray-900 dark:text-white">$0.00</dd>
                   </dl>
 
                   <dl class="flex items-center justify-between gap-4">
                     <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Скидка</dt>
-                    <dd class="text-base font-medium text-green-600">-$299.00</dd>
+                    <dd class="discount-item text-base font-medium text-green-600">-$0.00</dd>
                   </dl>
 
                   <dl class="flex items-center justify-between gap-4">
                     <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Доставка</dt>
-                    <dd class="text-base font-medium text-gray-900 dark:text-white">$99</dd>
+                    <dd class="delivery-item text-base font-medium text-gray-900 dark:text-white">$0.00</dd>
                   </dl>
                 </div>
 
                 <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                   <dt class="text-base font-bold text-gray-900 dark:text-white">К оплате</dt>
-                  <dd class="text-base font-bold text-gray-900 dark:text-white">$8,191.00</dd>
+                  <dd class="final-price text-base font-bold text-gray-900 dark:text-white">$0.00</dd>
                 </dl>
               </div>
 
@@ -67,7 +67,7 @@
 
               <div class="flex items-center justify-center gap-2">
                 <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> или </span>
-                <a href="#" title=""
+                <a href="/" title=""
                   class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500">
                   Продолжить покупки
                   <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -104,6 +104,38 @@
       <script src="../assets/js/hover_profile.js"></script>
       <script src="../assets/js/favotire_btn.js"></script>
       <script>
+        // Функция для расчета итоговой суммы заказа
+        function calculateFinalPrice() {
+          const cartItems = document.querySelectorAll('.cart-item');
+          let finalPrice = 0;
+          
+
+          cartItems.forEach(item => {
+            const priceElement = item.querySelector('.item-price');
+            const price = parseFloat(priceElement.textContent.replace('$', ''));
+            finalPrice += price;
+          });
+
+          return finalPrice;
+        }
+
+        // Функция для обновления итоговой суммы заказа на странице
+        function updateTotal() {
+          const totalElement = document.querySelector('.total-price');
+          const finalPrice = calculateFinalPrice();
+          totalElement.textContent = `$${finalPrice.toFixed(2)}`;
+
+          const discount = document.querySelector('.discount-item').textContent.replace('$', '');
+          const delivery = document.querySelector('.delivery-item').textContent.replace('$', '');
+          const total_price = document.querySelector('.total-price').textContent.replace('$', '');
+
+          let price = (finalPrice - (-discount) - delivery) < 0 ? 0 : (finalPrice - (-discount) - delivery);
+          document.querySelector('.final-price').textContent = `$${(price).toFixed(2)}`;
+        }
+
+        updateTotal();
+
+
         document.addEventListener('DOMContentLoaded', () => {
           const cartContainer = document.querySelector('.cart-container');
 
@@ -122,8 +154,10 @@
             }
             // Обработчик кликов для кнопки удаления товара из корзины
             if (event.target.matches('.remove-cart-item')) {
+              updateTotal();
               removeCartItem(event.target);
             }
+            updateTotal();
           });
         });
 
