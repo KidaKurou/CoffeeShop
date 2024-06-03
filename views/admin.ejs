@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <script src="https://kit.fontawesome.com/d54d69edca.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <%- include('header'); %>
+
+        <section class="bg-white dark:bg-gray-900">
+            <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
+                <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">ДОБАВИТЬ
+                    ПРОДУКТ</h2>
+                <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">
+                    Вы можете добавить новый кофе в форме ниже.</p>
+                
+                
+                    <form action="/admin/add-product" method="POST">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"></textarea><br>
+                
+                        <label for="price">Price:</label>
+                        <input type="number" id="price" name="price" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <label for="discount">Discount:</label>
+                        <input type="number" id="discount" name="discount" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <label for="images">Images (comma-separated URLs):</label>
+                        <input type="text" id="images" name="images" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <label for="grindType">Grind Type:</label>
+                        <input type="text" id="grindType" name="grindType" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <label for="weight">Weight:</label>
+                        <input type="number" id="weight" name="weight" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <label for="acidity">Acidity:</label>
+                        <input type="number" id="acidity" name="acidity" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <label for="density">Density:</label>
+                        <input type="number" id="density" name="density" required class="w-full mb-4 rounded-lg border border-gray-200 p-2.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"><br>
+                
+                        <button type="submit">Add Product</button>
+                    </form>
+            </div>
+        </section>
+
+        <%- include('no_auth_popup'); %>
+
+            <%- include('footer'); %>
+                <script src="../assets/js/hover_profile.js"></script>
+</body>
+
+</html>

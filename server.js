@@ -344,24 +344,6 @@ app.post('/updateUserProfile', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/sort-products', async (req, res) => {
-  const { sortOrder } = req.body;
-  try {
-    let products;
-    if (sortOrder === 'ascending') {
-      products = await Product.find().sort({ price: 1 }); // Сортировка по возрастанию цены
-    } else if (sortOrder === 'descending') {
-      products = await Product.find().sort({ price: -1 }); // Сортировка по убыванию цены
-    } else {
-      products = await Product.find(); // Без сортировки
-    }
-    res.json(products, user);
-  } catch (error) {
-    console.error("Ошибка сортировки продуктов:", error);
-    res.status(500).json({ message: "Внутренняя ошибка сервера" });
-  }
-});
-
 // Checkout button
 app.get('/checkout', isAuthenticated, async (req, res) => {
   const user = await User.findById(req.session.userId);
@@ -388,7 +370,59 @@ app.get('/checkout', isAuthenticated, async (req, res) => {
 // admin panel
 app.get("/admin", async (req, res) => {
   const products = await Product.find();
-  res.render("admin_panel", { products });
+  res.render("admin", { products });
+});
+
+app.get("/admin", isAuthenticated, (req, res) => {
+  res.render("admin", { user: res.locals.user });
+});
+
+app.post("/admin/add-product", isAuthenticated, async (req, res) => {
+  const { name, description, price, discount, images, grindType, weight, acidity, density } = req.body;
+  console.log(name, description, price, discount, images, grindType, weight, acidity, density);
+
+  // Validate input
+  if (!name || !description || !price || !images || !grindType || !weight || !acidity || !density) {
+    return res.status(400).send("All fields are required");
+  }
+
+  // Save product
+  const newProduct = new Product({
+    name,
+    description,
+    price,
+    discount,
+    images: images.split(','),
+    options: {
+      grindType,
+      weight: Number(weight),
+    },
+    attributes: {
+      acidity: Number(acidity),
+      density: Number(density),
+    },
+  });
+
+  try {
+    await newProduct.save();
+    res.redirect("/admin");
+  } catch (error) {
+    console.error("Error adding product:", error);
+    res.status(500).send("Error adding product");
+  }
+});
+
+// Маршрут для удаления продукта
+app.delete("/admin/delete-product/:id", async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+      await Product.findByIdAndDelete(productId);
+      res.status(200).json({ message: "Продукт успешно удален." });
+  } catch (error) {
+      console.error("Ошибка при удалении продукта:", error);
+      res.status(500).json({ message: "Ошибка при удалении продукта." });
+  }
 });
 
 // 404 page

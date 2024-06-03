@@ -82,6 +82,38 @@
         <script src="../assets/js/hover_profile.js"></script>
         <script src="../assets/js/favotire_btn.js"></script>
         <script src="../assets/js/buy_btn.js"></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".delete-product-btn").forEach(button => {
+                    button.addEventListener("click", async (event) => {
+                        const productId = event.target.getAttribute("data-product-id");
+            
+                        if (confirm("Вы уверены, что хотите удалить этот продукт?")) {
+                            try {
+                                const response = await fetch(`/admin/delete-product/${productId}`, {
+                                    method: "DELETE",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    }
+                                });
+            
+                                if (response.ok) {
+                                    alert("Продукт успешно удален.");
+                                    location.reload(); // Reload the page to reflect the changes
+                                } else {
+                                    alert("Ошибка при удалении продукта.");
+                                }
+                            } catch (error) {
+                                console.error("Ошибка:", error);
+                                alert("Ошибка при удалении продукта.");
+                            }
+                        }
+                    });
+                });
+            });
+            </script>
+            
 </body>
 
 </html>
