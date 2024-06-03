@@ -8,6 +8,7 @@ const Product = require("./models/product.model");
 const User = require("./models/user.model");
 const Feedback = require("./models/feedback.model");
 const Cart = require("./models/cart.model");
+const Order = require("./models/order.model");
 
 const app = express();
 
@@ -215,7 +216,7 @@ app.post("/update-cart-item", async (req, res) => {
         item.quantity = quantity;
         item.grindType = grindType;
         item.weight = weight;
-        item.currentPrice = currentPrice; // Убедитесь, что это значение передается из фронтенда
+        item.currentPrice = currentPrice;
         await cart.save();
         res.json({ success: true });
       } else {
@@ -354,7 +355,6 @@ app.post('/sort-products', async (req, res) => {
     } else {
       products = await Product.find(); // Без сортировки
     }
-    // Отправьте отсортированные продукты обратно на клиент
     res.json(products, user);
   } catch (error) {
     console.error("Ошибка сортировки продуктов:", error);
@@ -362,6 +362,34 @@ app.post('/sort-products', async (req, res) => {
   }
 });
 
+// Checkout button
+app.get('/checkout', isAuthenticated, async (req, res) => {
+  const user = await User.findById(req.session.userId);
+  const cart = await Cart.findOne({ user: req.session.userId });
+  // if user's cart isn't empty, fill Order collection from user's cart (Order model equals Cart model) with JSON format (FETCH)
+  try {
+    if (cart && cart.items.length > 0) {
+      const order = new Order();
+      order.user = user;
+      order.items = cart.items;
+      await order.save();
+      // clear user's cart
+      cart.items = [];
+      await cart.save();
+      res.json({ success: true, message: "Ваш заказ успешно оформлен" });
+    }
+  }
+  catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).json({ message: "Внутренняя ошибка сервера" });
+  }
+});
+
+// admin panel
+app.get("/admin", async (req, res) => {
+  const products = await Product.find();
+  res.render("admin_panel", { products });
+});
 
 // 404 page
 app.get("*", (req, res) => {

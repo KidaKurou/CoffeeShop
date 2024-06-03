@@ -44,14 +44,14 @@
                     <dd class="total-price text-base font-medium text-gray-900 dark:text-white">$0.00</dd>
                   </dl>
 
-                  <dl class="flex items-center justify-between gap-4">
+                  <dl class="items-center justify-between gap-4 hidden">
                     <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Скидка</dt>
                     <dd class="discount-item text-base font-medium text-green-600">-$0.00</dd>
                   </dl>
 
                   <dl class="flex items-center justify-between gap-4">
                     <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Доставка</dt>
-                    <dd class="delivery-item text-base font-medium text-gray-900 dark:text-white">$0.00</dd>
+                    <dd class="delivery-item text-base font-medium text-gray-900 dark:text-white">$10.00</dd>
                   </dl>
                 </div>
 
@@ -61,9 +61,9 @@
                 </dl>
               </div>
 
-              <a href="#"
-                class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Оформить
-                заказ</a>
+              <button id="checkoutBtn"
+                class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                Оформить заказ</button>
 
               <div class="flex items-center justify-center gap-2">
                 <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> или </span>
@@ -99,6 +99,7 @@
       </div>
     </section>
 
+    <%- include('no_auth_popup'); %>
     <%- include('footer'); %>
 
       <script src="../assets/js/hover_profile.js"></script>
@@ -108,11 +109,11 @@
         function calculateFinalPrice() {
           const cartItems = document.querySelectorAll('.cart-item');
           let finalPrice = 0;
-          
+
 
           cartItems.forEach(item => {
             const priceElement = item.querySelector('.item-price');
-            const price = parseFloat(priceElement.textContent.replace('$', ''));
+            let price = parseFloat(priceElement.textContent.replace('$', ''));
             finalPrice += price;
           });
 
@@ -129,7 +130,7 @@
           const delivery = document.querySelector('.delivery-item').textContent.replace('$', '');
           const total_price = document.querySelector('.total-price').textContent.replace('$', '');
 
-          let price = (finalPrice - (-discount) - delivery) < 0 ? 0 : (finalPrice - (-discount) - delivery);
+          let price = (finalPrice <= 0) ? 0 : (finalPrice + parseInt(delivery));
           document.querySelector('.final-price').textContent = `$${(price).toFixed(2)}`;
         }
 
@@ -158,6 +159,29 @@
               removeCartItem(event.target);
             }
             updateTotal();
+          });
+
+          // Обработчик кнопки "Оформить заказ"
+          const checkoutBtn = document.querySelector('#checkoutBtn');
+          checkoutBtn.addEventListener('click', () => {
+            fetch('/checkout')
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                // alert('Заказ оформлен.');
+                showPopup('success');
+                // Очистка корзины
+                const cartContainer = document.querySelector('.cart-container');
+                cartContainer.innerHTML = '';
+                updateTotal();
+              } else {
+                alert('Произошла ошибка при оформлении заказа.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Произошла ошибка при оформлении заказа.');
+            });
           });
         });
 
@@ -234,6 +258,29 @@
               console.error('Error:', error);
               alert('Произошла ошибка при удалении товара из корзины.');
             });
+        }
+
+        function showPopup(type) {
+          let popup = document.querySelector("#login-popup");
+          document.getElementsByTagName('body')[0].appendChild(popup);
+          popup.classList.remove("hidden");
+          popup.querySelector("a").style.display = "none";
+          if (type === "success") {
+            popup.querySelector(".popup-h").textContent = "УСПЕХ!";
+            popup.querySelector(".popup-c").textContent = "ЗАКАЗ ОФОРМЛЕН!";
+            popup.querySelector("#bg-popup").classList.add("bg-green-100");
+          } else {
+            popup.querySelector(".popup-h").textContent = "Ошибка!";
+            popup.querySelector(".popup-c").textContent = "Ошибка при оформлении заказа.";
+            popup.querySelector("#bg-popup").classList.add("bg-red-100");
+          }
+          // Remove the pop-up after 5 seconds
+          setTimeout(() => {
+            popup.classList.add('hidden');
+            popup.querySelector("#bg-popup").classList.remove("bg-green-100");
+            popup.querySelector("#bg-popup").classList.remove("bg-red-100");
+            document.getElementsByTagName('body')[0].removeChild(popup);
+          }, 5000);
         }
 
       </script>
